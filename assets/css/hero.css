@@ -1,0 +1,61 @@
+.streamline-your {
+        margin: 0;
+}
+.streamline-your-inventory-container {
+        position: absolute;
+        top: 29.98px;
+        left: 0px;
+        font-size: 50px;
+        line-height: 62px;
+        display: inline-block;
+        width: 663px;
+}
+.welcome-to-inventory {
+        position: absolute;
+        top: 0px;
+        left: 164px;
+        letter-spacing: 0.1em;
+        line-height: 20px;
+        text-transform: uppercase;
+        color: #4a3aff;
+}
+.hero-child {
+        position: absolute;
+        height: 5.96%;
+        width: 3.32%;
+        top: 93.77%;
+        right: 73.6%;
+        bottom: 0.27%;
+        left: 23.08%;
+        max-width: 100%;
+        overflow: hidden;
+        max-height: 100%;
+}
+.effortlessly-track-manage {
+        position: absolute;
+        height: 18.97%;
+        width: 93.51%;
+        top: 44.92%;
+        left: 3.32%;
+        line-height: 30px;
+        color: #6f6c90;
+        display: inline-block;
+}
+.manage-the-warehouse {
+        position: absolute;
+        top: 346px;
+        left: calc(50% - 145.5px);
+        font-size: 16px;
+        line-height: 23px;
+        color: #000;
+}
+.hero {
+        width: 100%;
+        position: relative;
+        height: 369px;
+        text-align: center;
+        font-size: 18px;
+        color: #170f49;
+        font-family: 'DM Sans';
+}
+
