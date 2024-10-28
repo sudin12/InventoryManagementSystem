@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <div class="Group37311" style="width: 100%; height: 100%; position: relative">
     <div class="Hero" style="width: 663px; height: 369px; left: 0px; top: 0px; position: absolute">
         <div class="StreamlineYourInventoryManagement" style="width: 663px; left: 0px; top: 29.98px; position: absolute; text-align: center; color: #170F49; font-size: 50px; font-family: DM Sans; font-weight: 700; line-height: 62px; word-wrap: break-word">Streamline Your<br/>Inventory Management</div>
@@ -13,3 +14,5 @@
         <div class="ButtonText" style="text-align: center; color: white; font-size: 18px; font-family: DM Sans; font-weight: 700; line-height: 20px; word-wrap: break-word">Start Now</div>
     </div>
 </div>
+=======
+>>>>>>> Stashed changes

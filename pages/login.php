@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Track - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1><span class="inventory">Inventory</span> <span class="track">Track</span></h1>
+        <h2>Log in</h2>
+        <p>Welcome back! Please enter your details.</p>
+        <form>
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <p class="signup-text">Don't have an account? <a href="#">Sign up</a></p>
+    </div>
+</body>
+</html>
