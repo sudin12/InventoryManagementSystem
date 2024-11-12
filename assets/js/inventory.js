@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
         statValues[1].textContent = stats.total_products;
         
         // Revenue (Top Selling)
-        statValues[2].textContent = '₹' + formatCurrency(stats.revenue);
+        statValues[2].textContent = 'Rs' + formatCurrency(stats.revenue);
         
         // Cost
-        statValues[3].textContent = '₹' + formatCurrency(stats.total_cost);
+        statValues[3].textContent = 'Rs' + formatCurrency(stats.total_cost);
     }
     
     function updateProductTable(products) {
@@ -72,42 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
     }
     
-    function initializeButtons() {
-        // Filter button
-        document.querySelector('button i[data-lucide="filter"]').parentElement
-            .addEventListener('click', showFilters);
-
-        function showFilters() {
-            const filterContainer = document.querySelector('.filter-container');
-            filterContainer.classList.toggle('hidden');
-            
-            const categoryFilter = document.querySelector('#category-filter');
-            categoryFilter.addEventListener('change', function() {
-                const selectedCategory = this.value;
-                filterProductsByCategory(selectedCategory);
-            });
-        }
-
-        function filterProductsByCategory(category) {
-            const rows = document.querySelectorAll('.product-table tbody tr');
-            rows.forEach(row => {
-                const productCategory = row.querySelector('td:nth-child(3)').textContent;
-                if (category === 'all' || productCategory === category) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
     
         // Download button
-        document.querySelector('button i[data-lucide="download"]').parentElement
-            .addEventListener('click', downloadProducts);
-    
-        // Add Product button
-        document.querySelector('button i[data-lucide="plus"]').parentElement
-            .addEventListener('click', showAddProductForm);
-    }
+        function showAddProductForm() {
+            document.getElementById("add-product-form").style.display = "block";
+          }
+      
+          function closeForm() {
+            document.getElementById("add-product-form").style.display = "none";
+          }
     
     function formatCurrency(value) {
         const amount = parseFloat(value);
@@ -129,12 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Implement download functionality
         console.log('Download products');
     }
-    
-    function showAddProductForm() {
-        // Implement add product functionality
-        console.log('Show add product form');
-    }
-    
+
     function editProduct(id) {
         // Implement edit functionality
         console.log('Edit product:', id);

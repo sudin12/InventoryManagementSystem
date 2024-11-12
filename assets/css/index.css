@@ -1,4 +1,4 @@
-/* Reset default margins and paddings */
+
 * {
     margin: 0;
     padding: 0;
@@ -35,7 +35,7 @@ header h1 {
 }
 
 header h1 span {
-    color: #5A67D8; /* Adjust color as needed */
+    color: #5A67D8;
 }
 
 .create-button {

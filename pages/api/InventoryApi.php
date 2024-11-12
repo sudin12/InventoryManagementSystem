@@ -10,7 +10,6 @@ if (!$conn) {
 }
 
 try {
-    // Get Stats Overview
     $stats_query = "SELECT 
         (SELECT COUNT(*) FROM categories) as total_categories,
         (SELECT COUNT(*) FROM products) as total_products,
@@ -29,7 +28,6 @@ try {
     }
     $stats = mysqli_fetch_assoc($stats_result);
 
-    // Get Product List
     $products_query = "SELECT 
         p.name,
         p.product_id as code,
