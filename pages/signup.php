@@ -22,15 +22,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         $error = "An account with this email already exists.";
     } else {
-        // Hash the password
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert user data into database
+
         $sql = "INSERT INTO Users (first_name, last_name, address, state, postal_code, phone_number,company_size, company_name, email, password_hash)
                 VALUES ('$first_name', '$last_name', '$address', '$state', '$postal_code', '$phone_number', '$company_size', '$company_name', '$email', '$password_hash')";
 
         if ($conn->query($sql) === TRUE) {
-            header("Location: login.php");  // Redirect to login page after successful signup
+            header("Location: login.php"); 
             exit();
         } else {
             $error = "Error: " . $sql . "<br>" . $conn->error;
@@ -47,7 +46,8 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Track - Sign Up</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../assets/css/signup.css">
+
 </head>
 <body>
     <div class="container">
@@ -58,11 +58,11 @@ $conn->close();
             <div class="row">
                 <div class="field">
                     <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" name="first_name" placeholder="John" required>
+                    <input type="text" id="first-name" name="first_name" placeholder="Ram" required>
                 </div>
                 <div class="field">
                     <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" name="last_name" placeholder="ex: Doe" required>
+                    <input type="text" id="last-name" name="last_name" placeholder="ex: Shrestha" required>
                 </div>
             </div>
 
@@ -102,7 +102,7 @@ $conn->close();
 
             <button type="submit">Sign up</button>
         </form>
-        <p class="login-text">Don't have an account? <a href="#">Login</a></p>
+        <p class="login-text">Don't have an account? <a href="login.php">Login</a></p>
     </div>
 </body>
 </html>

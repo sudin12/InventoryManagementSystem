@@ -19,7 +19,7 @@
             <img src="../assets/img/Home.svg" alt="" />
             <span style="margin-left: 12px">Dashboard</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="inventory.php" class="nav-item">
             <img src="../assets/img/inventory.svg" alt="" />
             <span style="margin-left: 12px">Inventory</span>
           </a>
@@ -52,9 +52,7 @@
         </div>
       </aside>
 
-      <!-- Main Content -->
       <main class="main-content">
-        <!-- Header -->
         <header class="header">
           <div class="search-box">
             <i data-lucide="search"></i>
@@ -68,7 +66,6 @@
           </div>
         </header>
 
-        <!-- Stats Grid -->
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon blue">
@@ -146,7 +143,6 @@
           </div>
         </div>
 
-        <!-- Sales Order and Quick Actions -->
         <div class="grid-container">
           <div class="sales-order card">
             <div class="card-header">
@@ -166,9 +162,7 @@
                   <th>Invoiced</th>
                 </tr>
               </thead>
-              <tbody id="salesOrderBody">
-                <!-- Sales order data will be populated here -->
-              </tbody>
+              <tbody id="salesOrderBody"></tbody>
             </table>
           </div>
 
@@ -207,7 +201,6 @@
           </div>
         </div>
 
-        <!-- Bottom Grid -->
         <div class="grid-container">
           <div class="top-selling card">
             <div class="card-header">
@@ -223,23 +216,18 @@
                   <th>Price</th>
                 </tr>
               </thead>
-              <tbody id="topSellingBody">
-                <!-- Top selling stock data will be populated here -->
-              </tbody>
+              <tbody id="topSellingBody"></tbody>
             </table>
           </div>
 
           <div class="low-stock card">
             <h2>Low Quantity Stock</h2>
-            <div class="stock-items" id="lowStockBody">
-              <!-- Low stock data will be populated here -->
-            </div>
+            <div class="stock-items" id="lowStockBody"></div>
           </div>
         </div>
       </main>
     </div>
 
-    <!-- Fetch Data from Backend and Populate DOM -->
     <script>
       fetch("dashboard.php")
         .then((response) => response.json())

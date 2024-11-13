@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
   }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -108,26 +109,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   </main>
   <!-- Add Product Form -->
-  <div id="add-product-form" class="form-popup">
-    <form action="inventory.php" method="post" class="form-container">
-      <h2>Add Product</h2>
+<div id="add-product-form" class="form-popup">
+  <form action="inventory.php" method="post" class="form-container" enctype="multipart/form-data">
+    <h2>Add Product</h2>
 
-      <label for="name"><b>Name</b></label>
-      <input type="text" placeholder="Enter Product Name" name="name" required>
+    <label for="name"><b>Name</b></label>
+    <input type="text" placeholder="Enter Product Name" name="name" required>
 
-      <label for="category"><b>Category</b></label>
-      <input type="text" placeholder="Enter Category" name="category" required>
+    <label for="category"><b>Category</b></label>
+    <select name="category_id" required>
+      <option value="">Select Category</option>
+      <?php
+      // Fetch categories from the database
+      $query = "SELECT * FROM categories";
+      $result = mysqli_query($conn, $query);
+      while ($row = mysqli_fetch_assoc($result)) {
+        echo "<option value='" . $row['category_id'] . "'>" . $row['name'] . "</option>";
+      }
+      ?>
+    </select>
 
-      <label for="price"><b>Price</b></label>
-      <input type="number" placeholder="Enter Price" name="price" required>
+    <label for="price"><b>Price</b></label>
+    <input type="number" placeholder="Enter Price" name="price" step="0.01" required>
 
-      <label for="quantity"><b>Quantity</b></label>
-      <input type="number" placeholder="Enter Quantity" name="quantity" required>
+    <label for="quantity"><b>Quantity</b></label>
+    <input type="number" placeholder="Enter Quantity" name="quantity" required>
 
-      <button type="submit" class="btn">Add Product</button>
-      <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-    </form>
-  </div>
+    <label for="image"><b>Product Image</b></label>
+    <input type="file" name="image">
+
+    <button type="submit" name="add_product" class="btn">Add Product</button>
+    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </form>
+</div>
 
   
 </body>

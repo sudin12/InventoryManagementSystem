@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${product.name}</td>
                 <td>${product.code}</td>
                 <td>${product.type}</td>
-                <td>₹${formatCurrency(product.price)}</td>
+                <td>RS${formatCurrency(product.price)}</td>
                 <td>${product.quantity}</td>
                 <td>
                     <img src="${product.image_url || '../assets/img/products/default.png'}" 
@@ -112,3 +112,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Implement delete functionality
         console.log('Delete product:', id);
     }
+    function showAddProductForm() {
+        document.getElementById("add-product-form").style.display = "block";
+      }
+      
+      function closeForm() {
+        document.getElementById("add-product-form").style.display = "none";
+      }
