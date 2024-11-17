@@ -171,7 +171,7 @@
             <img src="../assets/img/Report.svg" alt="" />
             <span style="margin-left: 12px">Reports</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/suppliers.php" class="nav-item">
             <img src="../assets/img/Suppliers.svg" alt="" />
             <span style="margin-left: 12px">Suppliers</span>
           </a>

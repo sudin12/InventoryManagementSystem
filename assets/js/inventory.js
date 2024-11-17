@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${product.name}</td>
                 <td>${product.code}</td>
                 <td>${product.type}</td>
-                <td>RS${formatCurrency(product.price)}</td>
+                <td>  ${formatCurrency(product.price)}</td>
                 <td>${product.quantity}</td>
                 <td>
                     <img src="${product.image_url || '../assets/img/products/default.png'}" 
@@ -67,8 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
             </tr>
         `).join('');
-    
-        // Reinitialize Lucide icons
+
         lucide.createIcons();
     }
     
@@ -84,17 +83,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function formatCurrency(value) {
         const amount = parseFloat(value);
-        if (amount >= 10000000) { // 1 crore = 10000000
+        if (amount >= 10000000) {
             return (amount / 10000000).toFixed(2) + 'cr';
-        } else if (amount >= 100000) { // 1 lakh = 100000
+        } else if (amount >= 100000) { 
             return (amount / 100000).toFixed(2) + 'L';
         }
-        return new Intl.NumberFormat('en-IN').format(amount);
+        return new Intl.NumberFormat('RS').format(amount);
     }
     
-    // Placeholder functions for buttons
     function showFilters() {
-        // Implement filter functionality
         console.log('Show filters');
     }
     

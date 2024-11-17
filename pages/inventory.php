@@ -1,8 +1,6 @@
 <?php
-// Add at top of inventory.php
 require_once '../config.php';
 
-// Add product handling function
 function addProduct($conn, $data) {
   $sql = "INSERT INTO products (name, category, price, quantity) 
       VALUES (?, ?, ?, ?)";
@@ -41,10 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Inventory Management</title>
 </head>
 <body>
-  <!-- Sidebar -->
   <?php include '../includes/sidebar.php'; ?>
 
-  <!-- Main Content -->
+
   <main class="main-content">
   <!-- Stats Overview -->
   <div class="stats-grid">
@@ -70,7 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 
-  <!-- Product List Section -->
   <div class="product-section">
     <div class="product-header">
     <h2>Product List</h2>
@@ -81,13 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button class="btn btn-secondary">
       <i data-lucide="download"></i> Download all
       </button>
+      <a href="AddProduct.php">
       <button class="btn btn-primary" onclick="showAddProductForm()">
        Add Product
       </button>
+      </a>
     </div>
     </div>
-
-    <!-- Product Table -->
+\
     <div class="table-container">
     <table class="product-table">
       <thead>
@@ -102,13 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </tr>
       </thead>
       <tbody id="product-table-body">
-      <!-- Data will be populated here by JavaScript -->
       </tbody>
     </table>
     </div>
   </div>
   </main>
-  <!-- Add Product Form -->
 <div id="add-product-form" class="form-popup">
   <form action="inventory.php" method="post" class="form-container" enctype="multipart/form-data">
     <h2>Add Product</h2>

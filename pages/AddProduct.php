@@ -16,7 +16,7 @@ if (isset($_POST['add_product'])) {
   $name = mysqli_real_escape_string($conn, $_POST['name']);
   $category_id = mysqli_real_escape_string($conn, $_POST['category_id']);
   $price = mysqli_real_escape_string($conn, $_POST['price']);
-  $quantity = mysqli_real_escape_string($conn, $_POST['quantity_in_hand']);
+  $quantity_in_hand = mysqli_real_escape_string($conn, $_POST['quantity_in_hand']);
 
   // Handle image upload
  /* $new_image_name = null;
@@ -38,7 +38,7 @@ if (isset($_POST['add_product'])) {
     'name' => $name,
     'category_id' => $category_id,
     'price' => $price,
-    'quantity' => $quantity
+    'quantity_in_hand' => $quantity_in_hand,
   ];
 
   if (addProduct($conn, $data)) {
