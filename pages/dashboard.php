@@ -90,7 +90,7 @@ try {
         quantity_in_hand as remaining_quantity,
         low_quantity_alert
     FROM products
-    WHERE quantity_in_hand <= 60
+    WHERE quantity_in_hand <= 10
     LIMIT 5";
 
     $low_stock_result = mysqli_query($conn, $low_stock_query);

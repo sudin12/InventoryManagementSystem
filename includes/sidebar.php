@@ -196,9 +196,7 @@
         </div>
       </aside>
 
-      <!-- Main Content -->
       <main class="main-content">
-        <!-- Header -->
         <header class="header">
           <div class="search-box">
             <i data-lucide="search"></i>

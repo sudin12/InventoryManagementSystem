@@ -79,8 +79,14 @@ async function fetchDashboardData() {
 }
 
 function formatNumber(number) {
-        return new Intl.NumberFormat('en-IN', {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 2
-        }).format(number);
-}
+        if (number >= 1_000_000) {
+            // For millions
+            return (number / 1_000_000).toFixed(1).replace(/\.0/, '') + 'm';
+        } else if (number >= 1_000) {
+            // For thousands
+            return (number / 1_000).toFixed(1).replace(/\.0/, '') + 'k';
+        } else {
+            // For numbers less than a thousand
+            return number.toString();
+        }
+    }

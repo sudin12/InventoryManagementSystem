@@ -14,7 +14,9 @@
                 <header>
                         <h1>Supplier List</h1>
                         <div class="header-actions">
+                                <a href="AddSuppliers.php">
                                 <button class="primary-btn">Add Supplier</button>
+</a>
                                 <button class="filter-btn">
                                         <span>Filters</span>
                                 </button>
@@ -29,7 +31,7 @@
                                                 <th>Supplier Name</th>
                                                 
                                                 <th>Contact No.</th>
-                                                <th>Actions</th>
+                                                <th> Quick Actions</th>
                                         </tr>
                                 </thead>
                                 <tbody id="supplier-table-body">

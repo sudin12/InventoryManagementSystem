@@ -30,10 +30,10 @@ try {
 
     $products_query = "SELECT 
         p.name,
-        p.product_id as code,
+        p.product_id as product_id,
         c.name as type,
         p.price,
-        p.quantity_in_hand as quantity
+        p.quantity_in_hand as quantity_in_hand
         
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.category_id
@@ -65,6 +65,7 @@ try {
     http_response_code(500);
     echo json_encode(["error" => $e->getMessage()]);
 }
+
 
 mysqli_close($conn);
 ?>

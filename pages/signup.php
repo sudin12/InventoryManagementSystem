@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 require '../config.php';  
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -23,7 +22,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "An account with this email already exists.";
     } else {
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
 
         $sql = "INSERT INTO Users (first_name, last_name, address, state, postal_code, phone_number,company_size, company_name, email, password_hash)
                 VALUES ('$first_name', '$last_name', '$address', '$state', '$postal_code', '$phone_number', '$company_size', '$company_name', '$email', '$password_hash')";
@@ -47,7 +45,6 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Track - Sign Up</title>
     <link rel="stylesheet" href="../assets/css/signup.css">
-
 </head>
 <body>
     <div class="container">
@@ -83,7 +80,7 @@ $conn->close();
             <div class="row">
                 <div class="field">
                     <label for="phone">Phone Number</label>
-                    <input type="text" id="phone" name="phone_number"  required>
+                    <input type="text" id="phone" name="phone_number" required>
                 </div>
                 <div class="field">
                     <label for="company-size">Company Size</label>
@@ -106,3 +103,48 @@ $conn->close();
     </div>
 </body>
 </html>
+<script>
+document.querySelector('form').addEventListener('submit', function(event) {
+    var firstName = document.getElementById('first-name').value.trim();
+    var lastName = document.getElementById('last-name').value.trim();
+    var address = document.getElementById('address').value.trim();
+    var state = document.getElementById('state').value.trim();
+    var postalCode = document.getElementById('postal-code').value.trim();
+    var phoneNumber = document.getElementById('phone').value.trim();
+    var companySize = document.getElementById('company-size').value.trim();
+    var companyName = document.getElementById('company-name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value.trim();
+
+    if (!firstName || !lastName || !address || !state || !postalCode || !phoneNumber || !companySize || !companyName || !email || !password) {
+        alert('Please fill in all fields.');
+        event.preventDefault();
+        return;
+    }
+
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        alert('Please enter a valid email address.');
+        event.preventDefault();
+        return;
+    }
+
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters long.');
+        event.preventDefault();
+        return;
+    }
+
+    if (phoneNumber.length < 10) {
+        alert('Phone number must be at least 10 digits long.');
+        event.preventDefault();
+        return;
+    }
+
+    if (isNaN(companySize) || companySize <= 0) {
+        alert('Company size must be a positive number.');
+        event.preventDefault();
+        return;
+    }
+});
+</script>
