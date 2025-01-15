@@ -1,144 +1,126 @@
-<?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management Dashboard</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4; /* Light gray background */
+        }
 
-include_once '../config.php';
+        .dashboard-container {
+            background-color: #001f3f; /* Dark blue background */
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            max-width: 900px; /* Set a maximum width for the dashboard */
+            margin: 0 auto; /* Center the dashboard */
+        }
 
-if (!$conn) {
-    echo json_encode(["error" => "Database connection failed"]);
-    exit;
-}
+        .top-metrics {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
 
-try {
-    // Sales Overview
-    //COALESCE() function is used to handle NULL values in the query. If the value is NULL, it will be replaced with 0.
-    $sales_query = "SELECT 
-        COALESCE(SUM(oi.quantity * oi.price), 0) as total_sales, 
-        COALESCE(SUM(oi.quantity * oi.price), 0) - 
-            (SELECT COALESCE(SUM(cost), 0) FROM inventory_transactions WHERE transaction_type = 'Purchase') as revenue,
-        (SELECT SUM(oi.quantity * oi.price) 
-     FROM order_items oi 
-     JOIN orders o ON oi.order_id = o.order_id 
-     WHERE o.order_status = 'Invoiced') -
-    (SELECT SUM(cost) 
-     FROM inventory_transactions 
-     WHERE transaction_type = 'Purchase') as profit,
-        (SELECT COALESCE(SUM(cost), 0) FROM inventory_transactions WHERE transaction_type = 'Purchase') as cost
-    FROM order_items oi
-    JOIN orders o ON oi.order_id = o.order_id
-    WHERE o.order_status = 'Invoiced'";
+        .metric-box {
+            background-color: #0074D9; /* Blue metric boxes */
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            width: 20%; /* Adjust width as needed */
+        }
 
-    $sales_result = mysqli_query($conn, $sales_query);
-    if (!$sales_result) {
-        throw new Exception(mysqli_error($conn));
-    }
-    $sales_overview = mysqli_fetch_assoc($sales_result);
+        .metric-box h2 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
 
-    // Purchase Overview
-    $purchase_query = "SELECT 
-        COUNT(*) as total_purchase,
-        COALESCE(SUM(cost), 0) as total_cost,
-        (SELECT COUNT(*) FROM returns) as cancel_count,
-        (SELECT COALESCE(SUM(r.quantity * p.price), 0) FROM returns r 
-         JOIN products p ON r.product_id = p.product_id) as return_amount
-    FROM inventory_transactions 
-    WHERE transaction_type = 'Purchase'";
+        .metric-box p {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
 
-    $purchase_result = mysqli_query($conn, $purchase_query);
-    $purchase_overview = mysqli_fetch_assoc($purchase_result);
+        .value-stock{
+            background-color: #001f3f;
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            float: left;
+        }
+        .warehouse-stock {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 65%;
+            float: right;
+        }
+        .clear-fix{
+            clear: both;
+        }
+        /* Styles for the bar chart (placeholder) */
+        .chart {
+            height: 200px; /* Adjust height as needed */
+            background-color: #eee; /* Light gray background for the chart area */
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .stock-purchases{
+            margin-top: 20px;
+            clear:both;
+        }
 
-    // Sales Order
-    $sales_order_query = "SELECT 
-        channel,
-        SUM(CASE WHEN order_status = 'Draft' THEN 1 ELSE 0 END) as draft,
-        SUM(CASE WHEN order_status = 'Confirmed' THEN 1 ELSE 0 END) as confirmed,
-        SUM(CASE WHEN order_status = 'Packed' THEN 1 ELSE 0 END) as packed,
-        SUM(CASE WHEN order_status = 'Shipped' THEN 1 ELSE 0 END) as shipped,
-        SUM(CASE WHEN order_status = 'Invoiced' THEN 1 ELSE 0 END) as invoiced
-    FROM orders
-    GROUP BY channel";
+    </style>
+</head>
+<body>
 
-    $sales_order_result = mysqli_query($conn, $sales_order_query);
-    $sales_orders = [];
-    while($row = mysqli_fetch_assoc($sales_order_result)) {
-        $sales_orders[] = $row;
-    }
+    <div class="dashboard-container">
+        <h1>Inventory Management</h1>
+        <div class="top-metrics">
+            <div class="metric-box">
+                <h2>Total Products</h2>
+                <p>9</p>
+            </div>
+            <div class="metric-box">
+                <h2>Low Stock</h2>
+                <p>4</p>
+            </div>
+            <div class="metric-box">
+                <h2>Out of Stock</h2>
+                <p>1</p>
+            </div>
+            <div class="metric-box">
+                <h2>Suppliers</h2>
+                <p>5</p>
+            </div>
+        </div>
 
-    // Top Selling Stock
-    $top_selling_query = "SELECT 
-        p.name,
-        COALESCE(SUM(oi.quantity), 0) as sold_quantity,
-        p.quantity_in_hand as remaining_quantity,
-        p.price
-    FROM products p
-    LEFT JOIN order_items oi ON p.product_id = oi.product_id
-    GROUP BY p.product_id
-    ORDER BY sold_quantity DESC
-    LIMIT 5";
+        <div class="value-stock">
+            <h2>Value of stock</h2>
+            <p>$3,186</p>
+            <div class="stock-purchases">
+                <h2>Stock Purchases</h2>
+                <p>Unfulfilled 4</p>
+                <p>Received 1</p>
+            </div>
+        </div>
+        <div class="warehouse-stock">
+            <h2>Warehouse Stock</h2>
+            <div class="chart">
+                <p>Bar chart would go here (using a library like Chart.js)</p>
+            </div>
+        </div>
+        <div class="clear-fix"></div>
+    </div>
 
-    $top_selling_result = mysqli_query($conn, $top_selling_query);
-    $top_selling = [];
-    while($row = mysqli_fetch_assoc($top_selling_result)) {
-        $top_selling[] = $row;
-    }
-
-    // Low Quantity Stock
-    $low_stock_query = "SELECT 
-        name,
-        quantity_in_hand as remaining_quantity,
-        low_quantity_alert
-    FROM products
-    WHERE quantity_in_hand <= 10
-    LIMIT 5";
-
-    $low_stock_result = mysqli_query($conn, $low_stock_query);
-    $low_stock = [];
-    while($row = mysqli_fetch_assoc($low_stock_result)) {
-        $low_stock[] = $row;
-    }
-
-    // Inventory Summary
-    $summary_query = "SELECT 
-        SUM(quantity_in_hand) as quantity_in_hand,
-        SUM(quantity_to_receive) as to_be_received,
-        (SELECT COUNT(*) FROM suppliers) as supplier_count,
-        (SELECT COUNT(*) FROM categories) as category_count
-    FROM products";
-
-    $summary_result = mysqli_query($conn, $summary_query);
-    $summary = mysqli_fetch_assoc($summary_result);
-
-    $response = [
-        "sales_overview" => [
-            "sales" => floatval($sales_overview['total_sales']),
-            "revenue" => floatval($sales_overview['revenue']),
-            "profit" => floatval($sales_overview['profit']),
-            "cost" => floatval($sales_overview['cost'])
-        ],
-        "purchase_overview" => [
-            "total_purchase" => intval($purchase_overview['total_purchase']),
-            "total_cost" => floatval($purchase_overview['total_cost']),
-            "cancel_count" => intval($purchase_overview['cancel_count']),
-            "return_amount" => floatval($purchase_overview['return_amount'])
-        ],
-        "sales_orders" => $sales_orders,
-        "top_selling" => $top_selling,
-        "low_stock" => $low_stock,
-        "summary" => [
-            "quantity_in_hand" => intval($summary['quantity_in_hand']),
-            "to_be_received" => intval($summary['to_be_received']),
-            "supplier_count" => intval($summary['supplier_count']),
-            "category_count" => intval($summary['category_count'])
-        ]
-    ];
-
-    echo json_encode($response);
-
-} catch (Exception $e) {
-    echo json_encode(["error" => $e->getMessage()]);
-}
-
-mysqli_close($conn);
-?>
+</body>
+</html>
