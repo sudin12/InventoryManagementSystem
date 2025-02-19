@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     fetchSuppliers();
 });
 
@@ -65,36 +65,39 @@ function populateTable(data) {
 }
 
 function viewSupplier(supplierId) {
-    // Convert supplierId to number for comparison
-    supplierId = parseInt(supplierId);
-    const supplier = suppliersData.find(s => parseInt(s.supplier_id) === supplierId);
-
+    const supplier = suppliersData.find(s => s.supplier_id === supplierId);
     if (!supplier) {
         showNotification('Supplier not found', 'error');
         return;
     }
 
-    const modalHTML = `
-        <div class="modal" id="viewSupplierModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Supplier Details</h2>
-                    <span class="close" onclick="closeModal('viewSupplierModal')">&times;</span>
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Supplier Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="detail-row">
+                    <span class="label">Name:</span>
+                    <span class="value">${supplier.name}</span>
                 </div>
-                <div class="modal-body">
-                    <div class="supplier-details">
-                        <p><strong>Name:</strong> ${supplier.name}</p>
-                        <p><strong>Contact Info:</strong> ${supplier.contact_info}</p>
-                        <p><strong>Created At:</strong> ${supplier.created_at ? new Date(supplier.created_at).toLocaleDateString() : 'N/A'}</p>
-                        <p><strong>Updated At:</strong> ${supplier.updated_at ? new Date(supplier.updated_at).toLocaleDateString() : 'N/A'}</p>
-                    </div>
+                <div class="detail-row">
+                    <span class="label">Contact:</span>
+                    <span class="value">${supplier.contact_info}</span>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-primary" onclick="editSupplier(${supplier.supplier_id})">Edit</button>
+                    <button class="btn-cancel">Close</button>
                 </div>
             </div>
         </div>
     `;
 
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    document.getElementById('viewSupplierModal').style.display = 'block';
+    document.body.appendChild(modal);
+    setupModalHandlers(modal);
 }
 
 function editSupplier(supplierId) {

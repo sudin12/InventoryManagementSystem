@@ -7,6 +7,8 @@
         <title>Supplier List</title>
         <link rel="stylesheet" href="../assets/css/suppliers.css">
         <script src="../assets/js/suppliers.js" defer></script> 
+       
+<script src="/InventoryManagementSystem/assets/js/shared.js"></script>
 </head>
 <body>
         <?php include '../includes/sidebar.php'; ?>
