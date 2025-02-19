@@ -1,92 +1,115 @@
-document.addEventListener('DOMContentLoaded', function() {
-        fetchDashboardData();
+document.addEventListener('DOMContentLoaded', () => {
+    fetchDashboardData();
 });
 
 async function fetchDashboardData() {
-        try {
-                const response = await fetch('../pages/dashboard.php');
-                if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
+    try {
+        // Fix the path to dashboard.php
+        const response = await fetch('../pages/dashboard.php');
+        const data = await response.json();
+        console.log('Dashboard data:', data);
 
-                if (data.error) {
-                        console.error('Server error:', data.error);
-                        return;
-                }
-
-                // Update Sales Overview
-                document.getElementById('totalSales').textContent = 'Rs ' + formatNumber(data.sales_overview.sales);
-                document.getElementById('totalRevenue').textContent = 'Rs ' + formatNumber(data.sales_overview.revenue);
-                document.getElementById('totalProfit').textContent = 'Rs ' + formatNumber(data.sales_overview.profit);
-                document.getElementById('totalCostValue').textContent = 'Rs ' + formatNumber(data.sales_overview.cost);
-
-                // Update Purchase Overview
-                document.getElementById('totalPurchase').textContent = data.purchase_overview.total_purchase;
-                document.getElementById('totalCost').textContent = 'Rs ' + formatNumber(data.purchase_overview.total_cost);
-                document.getElementById('totalCancel').textContent = data.purchase_overview.cancel_count;
-                document.getElementById('totalReturn').textContent = 'Rs ' + formatNumber(data.purchase_overview.return_amount);
-
-                // Update Sales Order Table
-                const salesOrderBody = document.getElementById('salesOrderBody');
-                salesOrderBody.innerHTML = '';
-                data.sales_orders.forEach(order => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                                <td>${order.channel}</td>
-                                <td>${order.draft}</td>
-                                <td>${order.confirmed}</td>
-                                <td>${order.packed}</td>
-                                <td>${order.shipped}</td>
-                                <td>${order.invoiced}</td>
-                        `;
-                        salesOrderBody.appendChild(row);
-                });
-
-                // Update Top Selling Stock
-                const topSellingBody = document.getElementById('topSellingBody');
-                topSellingBody.innerHTML = '';
-                data.top_selling.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                                <td>${item.name}</td>
-                                <td>${item.sold_quantity}</td>
-                                <td>${item.remaining_quantity}</td>
-                                <td>Rs ${formatNumber(item.price)}</td>
-                        `;
-                        topSellingBody.appendChild(row);
-                });
-
-                // Update Low Stock
-                const lowStockBody = document.getElementById('lowStockBody');
-                lowStockBody.innerHTML = '';
-                data.low_stock.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'stock-item';
-                        div.innerHTML = `
-                                <div class="stock-info">
-                                        <span class="stock-name">${item.name}</span>
-                                        <span class="stock-quantity">Remaining: ${item.remaining_quantity} Pieces</span>
-                                </div>
-                                <span class="low-stock-badge">Low</span>
-                        `;
-                        lowStockBody.appendChild(div);
-                });
-
-        } catch (error) {
-                console.error('Error fetching dashboard data:', error);
+        if (data.error) {
+            console.error('Server error:', data.error);
+            return;
         }
+
+        // Update Sales Overview
+        updateElement('totalSales', formatCurrency(data.sales_overview.sales));
+        updateElement('totalRevenue', formatCurrency(data.sales_overview.revenue));
+        updateElement('totalProfit', formatCurrency(data.sales_overview.profit));
+        updateElement('totalCostValue', formatCurrency(data.sales_overview.cost));
+
+        // Update Purchase Overview
+        updateElement('totalPurchase', data.purchase_overview.total_purchase);
+        updateElement('totalCost', formatCurrency(data.purchase_overview.total_cost));
+
+        // Update Summary Data
+        if (data.summary) {
+            console.log('Summary data:', data.summary);
+            updateElement('totalQuantity', data.summary.quantity_in_hand);
+            updateElement('supplierCount', data.summary.supplier_count);
+            updateElement('categoryCount', data.summary.category_count);
+        } else {
+            console.error('Summary data missing from response');
+        }
+
+        // Update Tables
+        updateSalesOrders(data.sales_orders);
+        updateTopSelling(data.top_selling);
+        updateLowStock(data.low_stock);
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Helper functions
+function updateElement(id, value) {
+    const element = document.getElementById(id);
+    if (element) {
+        element.textContent = value;
+    }
+}
+
+function formatCurrency(value) {
+    return 'Rs ' + formatNumber(value);
+}
+
+function updateSalesOrders(orders) {
+    const tbody = document.getElementById('salesOrderBody');
+    if (!tbody || !Array.isArray(orders)) return;
+
+    tbody.innerHTML = orders.map(order => `
+        <tr>
+            <td>${order.channel || 'N/A'}</td>
+            <td>${order.draft || 0}</td>
+            <td>${order.confirmed || 0}</td>
+            <td>${order.packed || 0}</td>
+            <td>${order.shipped || 0}</td>
+            <td>${order.invoiced || 0}</td>
+        </tr>
+    `).join('');
+}
+
+function updateTopSelling(items) {
+    const tbody = document.getElementById('topSellingBody');
+    if (!tbody || !Array.isArray(items)) return;
+
+    tbody.innerHTML = items.map(item => `
+        <tr>
+            <td>${item.name || 'N/A'}</td>
+            <td>${item.sold_quantity || 0}</td>
+            <td>${item.remaining_quantity || 0}</td>
+            <td>${formatCurrency(item.price || 0)}</td>
+        </tr>
+    `).join('');
+}
+
+function updateLowStock(items) {
+    const container = document.getElementById('lowStockBody');
+    if (!container || !Array.isArray(items)) return;
+
+    container.innerHTML = items.map(item => `
+        <div class="stock-item">
+            <div class="stock-info">
+                <span class="stock-name">${item.name || 'N/A'}</span>
+                <span class="stock-quantity">Remaining: ${item.remaining_quantity || 0} Pieces</span>
+            </div>
+            <span class="low-stock-badge">Low</span>
+        </div>
+    `).join('');
 }
 
 function formatNumber(number) {
-        if (number >= 1_000_000) {
-            // For millions
-            return (number / 1_000_000).toFixed(1).replace(/\.0/, '') + 'm';
-        } else if (number >= 1_000) {
-            // For thousands
-            return (number / 1_000).toFixed(1).replace(/\.0/, '') + 'k';
-        } else {
-            // For numbers less than a thousand
-            return number.toString();
-        }
+    if (number >= 1_000_000) {
+        // For millions
+        return (number / 1_000_000).toFixed(1).replace(/\.0/, '') + 'm';
+    } else if (number >= 1_000) {
+        // For thousands
+        return (number / 1_000).toFixed(1).replace(/\.0/, '') + 'k';
+    } else {
+        // For numbers less than a thousand
+        return number.toString();
     }
+}

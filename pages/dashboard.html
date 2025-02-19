@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inventory Track</title>
     <link rel="stylesheet" href="../assets/css/dashboard.css" />
-    <script src="../assets/js/dashboard.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
   </head>
   <body>
     <div class="layout">
@@ -15,29 +13,38 @@
           <h1>Inventory Track</h1>
         </div>
         <nav class="nav-menu">
-          <a href="#" class="nav-item active">
+          <a href="../pages/dashboard.html" class="nav-item active">
             <img src="../assets/img/Home.svg" alt="" />
             <span style="margin-left: 12px">Dashboard</span>
           </a>
-          <a href="inventory.php" class="nav-item">
+          <a href="../pages/inventory.php" class="nav-item">
             <img src="../assets/img/inventory.svg" alt="" />
             <span style="margin-left: 12px">Inventory</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/reports.php" class="nav-item">
             <img src="../assets/img/Report.svg" alt="" />
             <span style="margin-left: 12px">Reports</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/suppliers.php" class="nav-item">
             <img src="../assets/img/Suppliers.svg" alt="" />
             <span style="margin-left: 12px">Suppliers</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/sales.php" class="nav-item">
             <img src="../assets/img/Order.svg" alt="" />
-            <span style="margin-left: 12px">Orders</span>
+            <span style="margin-left: 12px">Orders & Sales</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/categories.php" class="nav-item">
             <img src="../assets/img/Manage Store.svg" alt="" />
-            <span style="margin-left: 12px">Manage Store</span>
+            <span style="margin-left: 12px">Categories</span>
+          </a>
+          <a href="../pages/customers.php" class="nav-item">
+            <img
+              width="24"
+              height="24"
+              src="https://img.icons8.com/material-outlined/24/gender-neutral-user.png"
+              alt="gender-neutral-user"
+            />
+            <span style="margin-left: 12px">Customers</span>
           </a>
         </nav>
         <div class="sidebar-footer">
@@ -66,6 +73,7 @@
           </div>
         </header>
 
+        <!-- Purchase Overview Stats -->
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon blue">
@@ -73,7 +81,7 @@
             </div>
             <div class="stat-info">
               <span class="stat-label">Purchase</span>
-              <span class="stat-value" id="totalPurchase">₹ 0</span>
+              <span class="stat-value" id="totalPurchase">0</span>
             </div>
           </div>
           <div class="stat-card">
@@ -82,28 +90,31 @@
             </div>
             <div class="stat-info">
               <span class="stat-label">Cost</span>
-              <span class="stat-value" id="totalCost">₹ 0</span>
+              <span class="stat-value" id="totalCost">Rs 0</span>
             </div>
           </div>
+          <!-- Summary Cards -->
           <div class="stat-card">
             <div class="stat-icon orange">
-              <i data-lucide="pie-chart"></i>
+              <i data-lucide="package"></i>
             </div>
             <div class="stat-info">
-              <span class="stat-label">Cancel</span>
-              <span class="stat-value" id="totalCancel">₹ 0</span>
+              <span class="stat-label">Total Quantity</span>
+              <span class="stat-value" id="totalQuantity">0</span>
             </div>
           </div>
           <div class="stat-card">
             <div class="stat-icon green">
-              <i data-lucide="package"></i>
+              <i data-lucide="users"></i>
             </div>
             <div class="stat-info">
-              <span class="stat-label">Return</span>
-              <span class="stat-value" id="totalReturn">₹ 0</span>
+              <span class="stat-label">Suppliers</span>
+              <span class="stat-value" id="supplierCount">0</span>
             </div>
           </div>
         </div>
+
+        <!-- Sales Overview Stats -->
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-icon blue">
@@ -143,6 +154,7 @@
           </div>
         </div>
 
+        <!-- Sales Order and Quick Actions -->
         <div class="grid-container">
           <div class="sales-order card">
             <div class="card-header">
@@ -201,6 +213,7 @@
           </div>
         </div>
 
+        <!-- Stock Information -->
         <div class="grid-container">
           <div class="top-selling card">
             <div class="card-header">
@@ -228,75 +241,13 @@
       </main>
     </div>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../assets/js/dashboard.js"></script>
     <script>
-      fetch("dashboard.php")
-        .then((response) => response.json())
-        .then((data) => {
-          document.getElementById("totalPurchase").innerText = `₹ ${
-            data.stats.total_purchase || 0
-          }`;
-          document.getElementById("totalCost").innerText = `₹ ${
-            data.stats.total_cost || 0
-          }`;
-          document.getElementById("totalCancel").innerText = `₹ ${
-            data.stats.total_cancel || 0
-          }`;
-          document.getElementById("totalReturn").innerText = `₹ ${
-            data.stats.total_return || 0
-          }`;
-          document.getElementById("totalSales").innerText = `₹ ${
-            data.stats.total_sales || 0
-          }`;
-          document.getElementById("totalRevenue").innerText = `₹ ${
-            data.stats.total_revenue || 0
-          }`;
-          document.getElementById("totalProfit").innerText = `₹ ${
-            data.stats.total_profit || 0
-          }`;
-          document.getElementById("totalCostValue").innerText = `₹ ${
-            data.stats.total_cost_value || 0
-          }`;
-
-          // Sales Orders
-          const salesOrderBody = document.getElementById("salesOrderBody");
-          data.salesOrders.forEach((order) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-            <td>${order.channel}</td>
-            <td>${order.draft}</td>
-            <td>${order.confirmed}</td>
-            <td>${order.packed}</td>
-            <td>${order.shipped}</td>
-            <td>${order.invoiced}</td>
-          `;
-            salesOrderBody.appendChild(row);
-          });
-
-          // Top Selling Stock
-          const topSellingBody = document.getElementById("topSellingBody");
-          data.topSellingStock.forEach((stock) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-            <td>${stock.product_name}</td>
-            <td>${stock.sold_quantity}</td>
-            <td>${stock.remaining_quantity}</td>
-            <td>₹ ${stock.price}</td>
-          `;
-            topSellingBody.appendChild(row);
-          });
-
-          // Low Stock Items
-          const lowStockBody = document.getElementById("lowStockBody");
-          data.lowStockItems.forEach((item) => {
-            const stockItem = document.createElement("div");
-            stockItem.className = "low-stock-item";
-            stockItem.innerText = `${item.product_name}: ${item.remaining_quantity} left`;
-            lowStockBody.appendChild(stockItem);
-          });
-        })
-        .catch((error) =>
-          console.error("Error fetching dashboard data:", error)
-        );
+      // Initialize Lucide icons after DOM loads
+      document.addEventListener("DOMContentLoaded", function () {
+        lucide.createIcons();
+      });
     </script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    fetchInventoryData();
+    loadInventory();
     initializeButtons();
 });
 
@@ -69,59 +69,49 @@ function updateProductTable(products) {
     `).join('');
 }
 
-async function viewProduct(productId) {
-    try {
-        const response = await fetch('../pages/api/actions.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'view',
-                product_id: productId
-            })
+function viewProduct(productId) {
+    fetch(`../pages/api/ProductsApi.php?action=view&id=${productId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.data) {
+                const product = data.data;
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Product Details</h2>
+                            <span class="close">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                            <div class="detail-row">
+                                <span class="label">Name:</span>
+                                <span class="value">${product.name}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Price:</span>
+                                <span class="value">Rs${formatCurrency(product.price)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Quantity:</span>
+                                <span class="value">${product.quantity_in_hand}</span>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn-primary" onclick="editProduct(${product.product_id})">Edit</button>
+                                <button class="btn-cancel">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+                setupModalHandlers(modal);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error fetching product details', 'error');
         });
-
-        const data = await response.json();
-
-        if (data.success) {
-            showProductModal(data.data);
-        } else {
-            alert(data.error || 'Error loading product details');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error loading product details');
-    }
-}
-
-function showProductModal(product) {
-    const existingModal = document.getElementById('viewProductModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-
-    const modalHTML = `
-        <div class="modal" id="viewProductModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Product Details</h2>
-                    <span class="close" onclick="closeModal('viewProductModal')">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Name:</strong> ${product.name}</p>
-                    <p><strong>Code:</strong> ${product.code}</p>
-                    <p><strong>Type:</strong> ${product.type}</p>
-                    <p><strong>Price:</strong> Rs${formatCurrency(product.price)}</p>
-                    <p><strong>Quantity:</strong> ${product.quantity_in_hand}</p>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    const modal = document.getElementById('viewProductModal');
-    modal.style.display = 'block';
 }
 
 async function editProduct(productId) {
@@ -163,15 +153,22 @@ function showEditProductModal(product) {
                         <input type="hidden" name="product_id" value="${product.product_id}">
                         <div class="form-group">
                             <label>Name:</label>
-                            <input type="text" name="name" value="${product.name}" required>
+                            <input type="text" name="name" value="${product.name}" required 
+                                onchange="validateField(this, 'Name cannot be empty')">
                         </div>
                         <div class="form-group">
                             <label>Price:</label>
-                            <input type="number" name="price" value="${product.price}" step="0.01" required>
+                            <input type="number" name="price" value="${product.price}" step="0.01" required 
+                                onchange="validatePrice(this)"
+                                oninput="validatePrice(this)">
+                            <span class="error-message"></span>
                         </div>
                         <div class="form-group">
                             <label>Quantity:</label>
-                            <input type="number" name="quantity" value="${product.quantity_in_hand}" required>
+                            <input type="number" name="quantity" value="${product.quantity_in_hand}" required 
+                                onchange="validateQuantity(this)"
+                                oninput="validateQuantity(this)">
+                            <span class="error-message"></span>
                         </div>
                         <button type="submit" class="btn-primary">Save Changes</button>
                     </form>
@@ -184,50 +181,103 @@ function showEditProductModal(product) {
     const modal = document.getElementById('editProductModal');
     modal.style.display = 'block';
 
-    // Add event listener for form submission
-    document.getElementById('editProductForm').addEventListener('submit', submitEditForm);
-}
+    // Add these new validation functions
+    window.validateField = function(input, message) {
+        const isValid = input.value.trim() !== '';
+        input.setCustomValidity(isValid ? '' : message);
+        showFieldError(input, isValid ? '' : message);
+        return isValid;
+    };
 
-async function submitEditForm(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+    window.validatePrice = function(input) {
+        const price = parseFloat(input.value);
+        const isValid = !isNaN(price) && price > 0;
+        const message = !isNaN(price) ? (price <= 0 ? 'Price must be greater than 0' : '') : 'Please enter a valid number';
+        input.setCustomValidity(isValid ? '' : message);
+        showFieldError(input, isValid ? '' : message);
+        return isValid;
+    };
 
-    // Frontend validation
-    const name = formData.get('name').trim();
-    const price = formData.get('price');
-    const quantity = formData.get('quantity');
+    window.validateQuantity = function(input) {
+        const quantity = parseInt(input.value);
+        const isValid = !isNaN(quantity) && quantity >= 0;
+        const message = !isNaN(quantity) ? (quantity < 0 ? 'Quantity cannot be negative' : '') : 'Please enter a valid number';
+        input.setCustomValidity(isValid ? '' : message);
+        showFieldError(input, isValid ? '' : message);
+        return isValid;
+    };
 
-    if (!name || !price || !quantity) {
-        alert('Please fill out all required fields.');
-        return;
-    }
+    window.showFieldError = function(input, message) {
+        const errorSpan = input.nextElementSibling;
+        if (errorSpan && errorSpan.className === 'error-message') {
+            errorSpan.textContent = message;
+            errorSpan.style.display = message ? 'block' : 'none';
+        }
+    };
 
-    if (isNaN(price) || isNaN(quantity)) {
-        alert('Price and quantity must be numeric values.');
-        return;
-    }
+    // Modified form submission handler with improved validation
+    document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = e.target.name.value.trim();
+        const priceStr = e.target.price.value;
+        const quantityStr = e.target.quantity.value;
+        const price = parseFloat(priceStr);
+        const quantity = parseInt(quantityStr);
 
-    // Proceed with submitting the data
-    try {
-        const response = await fetch('../pages/api/actions.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(Object.fromEntries(formData))
+        // Clear previous error messages
+        document.querySelectorAll('.error-message').forEach(el => {
+            el.style.display = 'none';
+            el.textContent = '';
         });
 
-        const result = await response.json();
-
-        if (result.success) {
-            closeModal('editProductModal');
-        
-            fetchInventoryData(); // Refresh the data
-        } else {
-            alert(result.error || 'Failed to update product');
+        // Validate each field
+        if (!name) {
+            showNotification('Product name cannot be empty', 'error');
+            return;
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error updating product');
-    }
+
+        if (!priceStr || isNaN(price) || price <= 0) {
+            showNotification('Price must be greater than 0', 'error');
+            return;
+        }
+
+        if (!quantityStr || isNaN(quantity) || quantity < 0) {
+            showNotification('Quantity cannot be negative', 'error');
+            return;
+        }
+
+        // Create validated data object
+        const formData = {
+            action: 'edit',
+            product_id: e.target.product_id.value,
+            name: name,
+            price: price,
+            quantity: quantity
+        };
+
+        try {
+            const response = await fetch('../pages/api/actions.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+            
+            if (!result.success) {
+                showNotification(result.error || 'Failed to update product', 'error');
+                return;
+            }
+
+            showNotification('Product updated successfully', 'success');
+            closeModal('editProductModal');
+            fetchInventoryData();
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error updating product', 'error');
+        }
+    });
 }
 
 function deleteProduct(productId) {
@@ -324,7 +374,18 @@ const styles = `
     }
     to {
         transform: translateX(0);
-        opacity: 1;
+        opacity: 1);
     }
+}
+
+.error-message {
+    color: #F44336;
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+}
+
+.form-group {
+    margin-bottom: 15px;
 }
 `;

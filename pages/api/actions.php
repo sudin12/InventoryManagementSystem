@@ -10,12 +10,11 @@ if (!$conn) {
     die(json_encode(["error" => "Connection failed: " . mysqli_connect_error()]));
 }
 
-// Get POST data
 $data = json_decode(file_get_contents('php://input'), true);
 $action = $data['action'] ?? '';
 $product_id = $data['product_id'] ?? null;
 
-// Debug logging
+
 error_log("Received request - Action: " . $action . ", Product ID: " . $product_id);
 
 try {
@@ -77,12 +76,27 @@ try {
 
             // Sanitize input data
             $name = mysqli_real_escape_string($conn, $name);
-            $description = mysqli_real_escape_string($conn, $description);
+        
+            // Server-side validation
+            if (empty($data['name'])) {
+                echo json_encode(['success' => false, 'error' => 'Product name cannot be empty']);
+                exit;
+            }
+            
+            if (!is_numeric($data['price']) || $data['price'] <= 0) {
+                echo json_encode(['success' => false, 'error' => 'Price must be greater than 0']);
+                exit;
+            }
+            
+            if (!is_numeric($data['quantity']) || $data['quantity'] < 0) {
+                echo json_encode(['success' => false, 'error' => 'Quantity cannot be negative']);
+                exit;
+            }
 
             // Update the product in the database
-            $query = "UPDATE products SET name = ?, description = ?, price = ?, quantity_in_hand = ? WHERE product_id = ?";
+            $query = "UPDATE products SET name = ?,  price = ?, quantity_in_hand = ? WHERE product_id = ?";
             $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "ssdii", $name, $description, $price, $quantity, $product_id);
+            mysqli_stmt_bind_param($stmt, "sdii", $name,  $price, $quantity, $product_id);
             $success = mysqli_stmt_execute($stmt);
 
             if ($success) {

@@ -14,7 +14,6 @@ function addProduct($conn, $data) {
   ]);
 }
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   try {
     $result = addProduct($conn, $_POST);
@@ -36,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../assets/css/inventory.css"> 
   <script src="../assets/js/inventory.js" defer></script>
+
+<script src="/InventoryManagementSystem/assets/js/shared.js"></script>
   <title>Inventory Management</title>
 </head>
 <body>
@@ -94,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </tr>
           </thead>
           <tbody>
-            <!-- Table content will be dynamically populated -->
+           
           </tbody>
         </table>
       </div>

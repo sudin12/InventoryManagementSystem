@@ -153,21 +153,21 @@
   
  </style>
 <body>
+<?php
+// ...existing code...
+?>
 <div class="layout">
       <aside class="sidebar">
-        <div class="logo">
-          <h1>Inventory Track</h1>
-        </div>
         <nav class="nav-menu">
-          <a href="#" class="nav-item active">
+          <a href="../pages/dashboard.html" class="nav-item active">
             <img src="../assets/img/Home.svg" alt="" />
             <span style="margin-left: 12px">Dashboard</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/inventory.php" class="nav-item">
             <img src="../assets/img/inventory.svg" alt="" />
             <span style="margin-left: 12px">Inventory</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/reports.php" class="nav-item">
             <img src="../assets/img/Report.svg" alt="" />
             <span style="margin-left: 12px">Reports</span>
           </a>
@@ -175,14 +175,19 @@
             <img src="../assets/img/Suppliers.svg" alt="" />
             <span style="margin-left: 12px">Suppliers</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/sales.php" class="nav-item">
             <img src="../assets/img/Order.svg" alt="" />
-            <span style="margin-left: 12px">Orders</span>
+            <span style="margin-left: 12px">Orders & Sales</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="../pages/categories.php" class="nav-item">
             <img src="../assets/img/Manage Store.svg" alt="" />
-            <span style="margin-left: 12px">Manage Store</span>
+            <span style="margin-left: 12px">Categories</span>
           </a>
+          <a href="../pages/customers.php" class="nav-item">
+          <img width="24" height="24" src="https://img.icons8.com/material-outlined/24/gender-neutral-user.png" alt="gender-neutral-user"/>
+            <span style="margin-left: 12px">Customers</span>
+          </a>
+    
         </nav>
         <div class="sidebar-footer">
           <a href="#" class="nav-item">
